@@ -1,4 +1,4 @@
-import {  StakeCall, UnstakeCall  } from '../generated/HectorStakingV1/HectorStaking'
+import {  StakeCall, UnstakeCall  } from '../generated/LuxorStakingV1/LuxorStaking'
 import {handleBlock} from './utils/ProtocolMetrics'
 
 export function handleStake(call: StakeCall): void {

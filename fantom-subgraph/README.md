@@ -1,3 +1,3 @@
-# hector-subgraph
+# Luxor-subgraph
 
-Repo for the hectordao subgraph
+Repo for the Luxor Money subgraph

@@ -4,8 +4,8 @@ import { HectorERC20 } from '../../generated/HectorStakingV1/HectorERC20';
 import { sHectorERC20 } from '../../generated/HectorStakingV1/sHectorERC20';
 import { CirculatingSupply } from '../../generated/HectorStakingV1/CirculatingSupply';
 import { ERC20 } from '../../generated/HectorStakingV1/ERC20';
-import { UniswapV2Pair } from '../../generated/HectorStakingV1/UniswapV2Pair';
-import { HectorStaking } from '../../generated/HectorStakingV1/HectorStaking';
+import { UniswapV2Pair } from '../../generated/LuxorStakingV1/UniswapV2Pair';
+import { LuxorStaking } from '../../generated/HectorStakingV1/LuxorStaking';
 import { bank } from '../../generated/HectorStakingV2/bank';
 import { TorLPPool } from '../../generated/HectorStakingV2/TorLPPool';
 

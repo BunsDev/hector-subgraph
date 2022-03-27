@@ -58,13 +58,3 @@ export function getTORTvl(): BigDecimal {
   return toDecimal(torTVL);
 }
 
-function getTorAPY(): BigDecimal {
-  const farmingAggregatorContract = FarmingAggregator.bind(
-    Address.fromString(FARMING_AGGREGATOR_ADDRESS)
-  );
-  const stakingAPY = farmingAggregatorContract.getStakingInfo(
-    Address.fromString(FARMING_AGGREGATOR_ADDRESS),
-    BigInt.fromString("0")
-  );
-  return toDecimal(stakingAPY.value1);
-}
