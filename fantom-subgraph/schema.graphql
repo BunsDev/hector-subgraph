@@ -1,4 +1,4 @@
-type Tor @entity {
+type Sor @entity {
   id: ID!
   timestamp: BigInt!
   torTVL: BigDecimal!
@@ -10,7 +10,7 @@ type Rebase @entity {
   id: ID!
   transaction: String!
   amount: BigDecimal!
-  stakedHecs: BigDecimal!
+  stakedLux: BigDecimal!
   percentage: BigDecimal!
   contract: String!
   timestamp: BigInt!
@@ -20,56 +20,36 @@ type Rebase @entity {
 type ProtocolMetric @entity {
   id: ID!
   timestamp: BigInt!
-  hecCirculatingSupply: BigDecimal!
-  sHecCirculatingSupply: BigDecimal!
+  luxCirculatingSupply: BigDecimal!
+  lumCirculatingSupply: BigDecimal!
   totalSupply: BigDecimal!
-  hecPrice: BigDecimal!
+  luxPrice: BigDecimal!
   marketCap: BigDecimal!
   totalValueLocked: BigDecimal!
   treasuryRiskFreeValue: BigDecimal!
   treasuryMarketValue: BigDecimal!
   treasuryInvestments: BigDecimal!
+
   nextEpochRebase: BigDecimal!
-  nextDistributedHec: BigDecimal!
+  nextDistributedLux: BigDecimal!
+
   treasuryDaiRiskFreeValue: BigDecimal!
-  treasuryUsdcRiskFreeValue: BigDecimal!
-  treasuryUsdcTokenAmount: BigDecimal!
+
   treasuryWFTMRiskFreeValue: BigDecimal!
   treasuryWFTMTokenAmount: BigDecimal!
-  treasuryMIMRiskFreeValue: BigDecimal!
-  treasuryFRAXTokenAmount: BigDecimal!
-  treasuryFRAXRiskFreeValue: BigDecimal!
-  treasuryGOHMRiskFreeValue: BigDecimal!
+
+  treasuryWLUMRiskFreeValue: BigDecimal!
+
   treasuryDaiMarketValue: BigDecimal!
   treasuryDaiTokenAmount: BigDecimal!
   treasuryDaiLPMarketValue: BigDecimal!
-  treasuryUsdcMarketValue: BigDecimal!
-  treasuryUsdcLPMarketValue: BigDecimal!
-  treasuryWFTMMarketValue: BigDecimal!
-  treasuryMIMMarketValue: BigDecimal!
-  treasuryFRAXMarketValue: BigDecimal!
-  treasuryGOHMMarketValue: BigDecimal!
+
+  treasuryWLUMMarketValue: BigDecimal!
+
   currentAPY: BigDecimal!
   runwayCurrent: BigDecimal
-  treasuryHecDaiPOL: BigDecimal!
-  treasuryHecUsdcPOL: BigDecimal!
-  treasuryHecFraxPOL: BigDecimal!
-  treasuryBOORiskFreeValue: BigDecimal!
-  treasuryBOOMarketValue: BigDecimal!
-  treasuryBOOTokenAmount: BigDecimal!
-  treasuryCRVRiskFreeValue: BigDecimal!
-  treasuryCRVMarketValue: BigDecimal!
-  treasuryCRVTokenAmount: BigDecimal!
-  treasuryWETHRiskFreeValue: BigDecimal!
-  treasuryWETHMarketValue: BigDecimal!
-  treasuryWETHTokenAmount: BigDecimal!
-  treasuryFantomValidatorValue: BigDecimal!
-  treasuryTORLPValue: BigDecimal!
-  bankBorrowed: BigDecimal!
-  bankSupplied: BigDecimal!
-  hecDaiTokenAmount: BigDecimal!
-  hecUsdcTokenAmount: BigDecimal!
-  hecFraxTokenAmount: BigDecimal!
+  treasuryLuxDaiPOL: BigDecimal!
+  luxDaiTokenAmount: BigDecimal!
 }
 
 type LastBlock @entity {
