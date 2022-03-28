@@ -12,13 +12,13 @@ export function rebaseFunction(call: RebaseCall): void {
     log.debug("Rebase_V1 event on TX {} with amount {}", [rebaseId, toDecimal(call.inputs.profit_, 9).toString()])
 
     if (rebase == null && call.inputs.profit_.gt(BigInt.fromI32(0))) {
-        let hec_contract = LuxorERC20.bind(Address.fromString(LUX_ERC20_CONTRACT))
+        let lux_contract = LuxorERC20.bind(Address.fromString(LUX_ERC20_CONTRACT))
 
         rebase = new Rebase(rebaseId)
         rebase.amount = toDecimal(call.inputs.profit_, 9)
-        rebase.stakedHecs = toDecimal(hec_contract.balanceOf(Address.fromString(STAKING_CONTRACT_V1)), 9)
+        rebase.stakedLux = toDecimal(lux_contract.balanceOf(Address.fromString(STAKING_CONTRACT_V1)), 9)
         rebase.contract = STAKING_CONTRACT_V1
-        rebase.percentage = rebase.amount.div(rebase.stakedHecs)
+        rebase.percentage = rebase.amount.div(rebase.stakedLux)
         rebase.transaction = rebaseId
         rebase.timestamp = call.block.timestamp
         rebase.value = rebase.amount.times(getLUXUSDRate())

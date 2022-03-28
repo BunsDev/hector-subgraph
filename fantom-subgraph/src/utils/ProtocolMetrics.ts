@@ -22,7 +22,8 @@ import {
     TREASURY_ADDRESS,
     // USDC_ERC20_CONTRACT,
     WFTM_ERC20_CONTRACT,
-    LUX_USDC_PAIR,
+    // LUX_USDC_PAIR,
+    LUX_FTM_PAIR,
     // LUX_USDC_PAIR_BLOCK,
     LUX_DAI_PAIR,
     STAKING_CONTRACT_V2_BLOCK,
@@ -30,11 +31,7 @@ import {
     LUM_ERC20_CONTRACT_V2_BLOCK,
     LUM_ERC20_CONTRACT_V2,
     // LOCKED_ADDRESS,
-    // MIM_ERC20_CONTRACT,
-    // FRAX_ERC20_CONTRACT,
-    // LUX_WLUM_PAIR_BLOCK,
-    // LUX_WLUM_PAIR_BLOCK,
-    // LUX_WLUM_PAIR_BLOCK,
+    // LUX_WLUM_PAIR,
     // LUX_WLUM_PAIR_BLOCK,
     // WETH_ERC20_CONTRACT,
     // BANK_UNITROLLER,
@@ -43,9 +40,9 @@ import {
 import { toDecimal } from './Decimals';
 import {
     getLUXUSDRate, getDiscountedPairUSD, getPairUSD, getFTMUSDRate,
-    getWLUMUSDRate, getBOOUSDRate
+    // getWLUMUSDRate
 } from './Price';
-const TOR_LP_POOL_BLOCK = '28731023';
+const SOR_LP_POOL_BLOCK = '28731023';
 const BANK_BLOCK = '29042732';
 const FANTOM_VALIDATOR_AMOUNT = '838870';
 const FANTOM_VALIDATOR_BLOCK = '31262749';
@@ -67,45 +64,20 @@ export function loadOrCreateProtocolMetric(blockNumber: BigInt, timestamp: BigIn
         protocolMetric.treasuryMarketValue = BigDecimal.fromString("0")
         protocolMetric.treasuryInvestments = BigDecimal.fromString("0")
         protocolMetric.nextEpochRebase = BigDecimal.fromString("0")
-        protocolMetric.nextDistributedHec = BigDecimal.fromString("0")
+        protocolMetric.nextDistributedLux = BigDecimal.fromString("0")
         protocolMetric.currentAPY = BigDecimal.fromString("0")
         protocolMetric.treasuryDaiRiskFreeValue = BigDecimal.fromString("0")
-        protocolMetric.treasuryUsdcRiskFreeValue = BigDecimal.fromString("0")
         protocolMetric.treasuryDaiMarketValue = BigDecimal.fromString("0")
-        protocolMetric.treasuryUsdcMarketValue = BigDecimal.fromString("0")
         protocolMetric.treasuryWFTMRiskFreeValue = BigDecimal.fromString("0")
         protocolMetric.treasuryWFTMMarketValue = BigDecimal.fromString("0")
-        protocolMetric.treasuryMIMRiskFreeValue = BigDecimal.fromString("0")
-        protocolMetric.treasuryMIMMarketValue = BigDecimal.fromString("0")
-        protocolMetric.treasuryFRAXRiskFreeValue = BigDecimal.fromString("0")
-        protocolMetric.treasuryFRAXMarketValue = BigDecimal.fromString("0")
         protocolMetric.treasuryWLUMRiskFreeValue = BigDecimal.fromString("0")
         protocolMetric.treasuryWLUMMarketValue = BigDecimal.fromString("0")
-        protocolMetric.treasuryHecDaiPOL = BigDecimal.fromString("0")
-        protocolMetric.treasuryHecUsdcPOL = BigDecimal.fromString("0")
-        protocolMetric.treasuryHecFraxPOL = BigDecimal.fromString("0")
-        protocolMetric.treasuryBOORiskFreeValue = BigDecimal.fromString("0")
-        protocolMetric.treasuryBOOMarketValue = BigDecimal.fromString("0")
-        protocolMetric.treasuryCRVRiskFreeValue = BigDecimal.fromString("0")
-        protocolMetric.treasuryCRVMarketValue = BigDecimal.fromString("0")
-        protocolMetric.treasuryWETHRiskFreeValue = BigDecimal.fromString("0")
-        protocolMetric.treasuryWETHMarketValue = BigDecimal.fromString("0")
-        protocolMetric.bankBorrowed = bigDecimal.fromString('0');
-        protocolMetric.bankSupplied = bigDecimal.fromString('0');
+        protocolMetric.treasuryLuxDaiPOL = BigDecimal.fromString("0")
         protocolMetric.treasuryDaiLPMarketValue = bigDecimal.fromString('0');
-        protocolMetric.treasuryUsdcLPMarketValue = bigDecimal.fromString('0');
-        protocolMetric.treasuryFantomValidatorValue = bigDecimal.fromString('0');
-        protocolMetric.treasuryTORLPValue = bigDecimal.fromString('0');
+        // protocolMetric.treasurySORLPValue = bigDecimal.fromString('0');
         protocolMetric.treasuryDaiTokenAmount = BigDecimal.fromString("0")
-        protocolMetric.treasuryUsdcTokenAmount = BigDecimal.fromString("0")
         protocolMetric.treasuryWFTMTokenAmount = BigDecimal.fromString("0")
-        protocolMetric.treasuryFRAXTokenAmount = BigDecimal.fromString("0")
-        protocolMetric.treasuryBOOTokenAmount = BigDecimal.fromString("0")
-        protocolMetric.treasuryCRVTokenAmount = BigDecimal.fromString("0")
-        protocolMetric.treasuryWETHTokenAmount = BigDecimal.fromString("0")
-        protocolMetric.hecDaiTokenAmount = BigDecimal.fromString("0")
-        protocolMetric.hecUsdcTokenAmount = BigDecimal.fromString("0")
-        protocolMetric.hecFraxTokenAmount = BigDecimal.fromString("0")
+        protocolMetric.luxDaiTokenAmount = BigDecimal.fromString("0")
 
         protocolMetric.save()
     }
@@ -115,8 +87,8 @@ export function loadOrCreateProtocolMetric(blockNumber: BigInt, timestamp: BigIn
 
 
 function getTotalSupply(): BigDecimal {
-    let hec_contract = LuxorERC20.bind(Address.fromString(LUX_ERC20_CONTRACT))
-    let total_supply = toDecimal(hec_contract.totalSupply(), 9)
+    let lux_contract = LuxorERC20.bind(Address.fromString(LUX_ERC20_CONTRACT))
+    let total_supply = toDecimal(lux_contract.totalSupply(), 9)
     log.debug("Total Supply {}", [total_supply.toString()])
     return total_supply
 }
@@ -154,35 +126,35 @@ function getLumSupply(blockNumber: BigInt): BigDecimal {
 
 function getLUXDAIReserves(pair: UniswapV2Pair): BigDecimal[] {
     let reserves = pair.getReserves()
-    let hecReserves = toDecimal(reserves.value0, 9)
+    let luxReserves = toDecimal(reserves.value0, 9)
     let daiReserves = toDecimal(reserves.value1, 18)
-    return [hecReserves, daiReserves]
+    return [luxReserves, daiReserves]
 }
 
 function getLUXUSDCReserves(pair: UniswapV2Pair): BigDecimal[] {
     let reserves = pair.getReserves()
     let usdcReserves = toDecimal(reserves.value0, 6)
-    let hecReserves = toDecimal(reserves.value1, 9)
-    return [hecReserves, usdcReserves]
+    let luxReserves = toDecimal(reserves.value1, 9)
+    return [luxReserves, usdcReserves]
 }
 
 function getLUXFRAXReserves(pair: UniswapV2Pair): BigDecimal[] {
     let reserves = pair.getReserves()
-    let hecReserves = toDecimal(reserves.value0, 9)
+    let luxReserves = toDecimal(reserves.value0, 9)
     let fraxReserves = toDecimal(reserves.value1, 18)
-    return [hecReserves, fraxReserves]
+    return [luxReserves, fraxReserves]
 }
 
 function getLUXWLUMReserves(pair: UniswapV2Pair): BigDecimal[] {
     let reserves = pair.getReserves()
-    let hecReserves = toDecimal(reserves.value0, 9)
+    let luxReserves = toDecimal(reserves.value0, 9)
     let gohmReserves = toDecimal(reserves.value1, 18)
-    return [hecReserves, gohmReserves]
+    return [luxReserves, gohmReserves]
 }
 
 // function getSorLpValue(): BigDecimal {
 //     let torLPERC20 = ERC20.bind(Address.fromString(SOR_LP_ADDRESS))
-//     let sorLpContract = SorLPPool.bind(Address.fromString(TOR_LP_POOL_ADDRESS));
+//     let sorLpContract = SorLPPool.bind(Address.fromString(SOR_LP_POOL_ADDRESS));
 //     let sorVirtualPrice = toDecimal(sorLpContract.get_virtual_price(), 18);
 
 //     const getSorLpBalance = torLPERC20.try_balanceOf(Address.fromString(TREASURY_ADDRESS));
@@ -204,9 +176,9 @@ function getMV_RFV(blockNumber: BigInt): BigDecimal[] {
     let wftmERC20 = ERC20.bind(Address.fromString(WFTM_ERC20_CONTRACT))
     // let wethERC20 = ERC20.bind(Address.fromString(WETH_ERC20_CONTRACT))
 
-    let hecdaiPair = UniswapV2Pair.bind(Address.fromString(LUX_DAI_PAIR))
+    let luxdaiPair = UniswapV2Pair.bind(Address.fromString(LUX_DAI_PAIR))
     // let luxusdcPair = UniswapV2Pair.bind(Address.fromString(LUX_USDC_PAIR))
-    // let luxwlumPair = UniswapV2Pair.bind(Address.fromString(LUX_WLUM_PAIR_BLOCK))
+    // let luxwlumPair = UniswapV2Pair.bind(Address.fromString(LUX_WLUM_PAIR)
 
     let daiBalance = daiERC20.balanceOf(Address.fromString(TREASURY_ADDRESS))
     // let usdcBalance = usdcERC20.balanceOf(Address.fromString(TREASURY_ADDRESS))
@@ -223,14 +195,14 @@ function getMV_RFV(blockNumber: BigInt): BigDecimal[] {
     let luxusdRate = getLUXUSDRate()
 
     //LUXDAI
-    let hecdaiBalance = hecdaiPair.balanceOf(Address.fromString(TREASURY_ADDRESS))
-    // let hecdaiLockedBalance = hecdaiPair.balanceOf(Address.fromString(LOCKED_ADDRESS))
-    let hecdaiTotalLP = toDecimal(hecdaiPair.totalSupply(), 18)
-    let hecdaiReserves = getLUXDAIReserves(hecdaiPair)
-    // let hecdaiPOL = toDecimal(hecdaiBalance.plus(hecdaiLockedBalance), 18).div(hecdaiTotalLP).times(BigDecimal.fromString("100"))
-    let hecdaiPOL = toDecimal(hecdaiBalance, 18).div(hecdaiTotalLP).times(BigDecimal.fromString("100"))
-    let hecdaiValue = getPairUSD(hecdaiBalance, hecdaiTotalLP, hecdaiReserves, luxusdRate, BigDecimal.fromString('1'))
-    let hecdaiRFV = getDiscountedPairUSD(hecdaiBalance, hecdaiTotalLP, hecdaiReserves, BigDecimal.fromString('1'))
+    let luxdaiBalance = luxdaiPair.balanceOf(Address.fromString(TREASURY_ADDRESS))
+    // let luxdaiLockedBalance = luxdaiPair.balanceOf(Address.fromString(LOCKED_ADDRESS))
+    let luxdaiTotalLP = toDecimal(luxdaiPair.totalSupply(), 18)
+    let luxdaiReserves = getLUXDAIReserves(luxdaiPair)
+    // let luxdaiPOL = toDecimal(luxdaiBalance.plus(luxdaiLockedBalance), 18).div(luxdaiTotalLP).times(BigDecimal.fromString("100"))
+    let luxdaiPOL = toDecimal(luxdaiBalance, 18).div(luxdaiTotalLP).times(BigDecimal.fromString("100"))
+    let luxdaiValue = getPairUSD(luxdaiBalance, luxdaiTotalLP, luxdaiReserves, luxusdRate, BigDecimal.fromString('1'))
+    let luxdaiRFV = getDiscountedPairUSD(luxdaiBalance, luxdaiTotalLP, luxdaiReserves, BigDecimal.fromString('1'))
 
     //LUXWLUM
     // let luxwlumValue = BigDecimal.fromString("0")
@@ -256,13 +228,13 @@ function getMV_RFV(blockNumber: BigInt): BigDecimal[] {
         // .plus(toDecimal(fraxBalance, 18))
         .plus(investments)
 
-    // let lpValue = hecdaiValue.plus(luxwlumValue)
-    // let rfvLpValue = hecdaiRFV.plus(luxwlumRFV)
+    // let lpValue = luxdaiValue.plus(luxwlumValue)
+    // let rfvLpValue = luxdaiRFV.plus(luxwlumRFV)
 
     let mv = stableValueDecimal.plus(wftmValue);
     let sorLpValue = bigDecimal.fromString('0');
-    // if (blockNumber.gt(BigInt.fromString(TOR_LP_POOL_BLOCK))) {
-    //     log.debug('TOR LP VALUE {}', [getSorLpValue().toString()])
+    // if (blockNumber.gt(BigInt.fromString(SOR_LP_POOL_BLOCK))) {
+    //     log.debug('SOR LP VALUE {}', [getSorLpValue().toString()])
     //     sorLpValue = getSorLpValue();
     //     mv = mv.plus(sorLpValue);
     // }
@@ -275,14 +247,14 @@ function getMV_RFV(blockNumber: BigInt): BigDecimal[] {
     // log.debug("Treasury USDC value {}", [toDecimal(usdcBalance, 6).toString()])
     log.debug("Treasury WFTM value {}", [wftmValue.toString()])
     log.debug("Treasury WFTM RFV {}", [wftmRFV.toString()])
-    log.debug("Treasury LUX-DAI RFV {}", [hecdaiRFV.toString()])
+    log.debug("Treasury LUX-DAI RFV {}", [luxdaiRFV.toString()])
     // log.debug("Treasury LUX-WLUM RFV {}", [luxwlumRFV.toString()])
 
     return [
         mv,
         rfv,
         // treasuryDaiRiskFreeValue = DAI RFV 
-        hecdaiRFV,
+        luxdaiRFV,
         // treasuryDaiMarketValue = DAI
         toDecimal(daiBalance, 18),
         // treasuryUsdcMarketValue = USDC
@@ -294,16 +266,16 @@ function getMV_RFV(blockNumber: BigInt): BigDecimal[] {
         // luxwlumValue,
         // luxwlumRFV,
         // POL
-        hecdaiPOL,
+        luxdaiPOL,
         // Investing
         investments,
-        hecdaiValue,,
+        luxdaiValue,,
         fantomValidatorValue,
         // sorLpValue,
         toDecimal(daiBalance, 18),
         toDecimal(wftmBalance, 18),
-        // toDecimal(hecdaiBalance.plus(hecdaiLockedBalance), 18),
-        toDecimal(hecdaiBalance, 18),
+        // toDecimal(luxdaiBalance.plus(luxdaiLockedBalance), 18),
+        toDecimal(luxdaiBalance, 18),
     ]
 }
 
@@ -388,46 +360,28 @@ export function updateProtocolMetrics(blockNumber: BigInt, timestamp: BigInt): v
     pm.treasuryMarketValue = mv_rfv[0]
     pm.treasuryRiskFreeValue = mv_rfv[1]
     pm.treasuryDaiRiskFreeValue = mv_rfv[2]
-    pm.treasuryUsdcRiskFreeValue = mv_rfv[3]
+    // pm.treasuryUsdcRiskFreeValue = mv_rfv[3]
     pm.treasuryDaiMarketValue = mv_rfv[4]
-    pm.treasuryUsdcMarketValue = mv_rfv[5]
+    // pm.treasuryUsdcMarketValue = mv_rfv[5]
     pm.treasuryWFTMRiskFreeValue = mv_rfv[6]
     pm.treasuryWFTMMarketValue = mv_rfv[7]
-    pm.treasuryMIMRiskFreeValue = mv_rfv[8]
-    pm.treasuryMIMMarketValue = mv_rfv[9]
-    pm.treasuryFRAXMarketValue = mv_rfv[10]
-    pm.treasuryFRAXRiskFreeValue = mv_rfv[11]
+
     pm.treasuryWLUMMarketValue = mv_rfv[12]
     pm.treasuryWLUMRiskFreeValue = mv_rfv[13]
-    pm.treasuryHecDaiPOL = mv_rfv[14]
-    pm.treasuryHecUsdcPOL = mv_rfv[15]
-    pm.treasuryHecFraxPOL = mv_rfv[16]
+    pm.treasuryLuxDaiPOL = mv_rfv[14]
+    // pm.treasuryLuxUsdcPOL = mv_rfv[15]    
     pm.treasuryInvestments = mv_rfv[17]
-    pm.treasuryBOORiskFreeValue = mv_rfv[18]
-    pm.treasuryBOOMarketValue = mv_rfv[19]
-    pm.treasuryCRVRiskFreeValue = mv_rfv[20]
-    pm.treasuryCRVMarketValue = mv_rfv[21]
-    pm.treasuryWETHRiskFreeValue = mv_rfv[22]
-    pm.treasuryWETHMarketValue = mv_rfv[23]
-    pm.treasuryDaiLPMarketValue = mv_rfv[24]
-    pm.treasuryUsdcLPMarketValue = mv_rfv[25]
-    pm.treasuryFantomValidatorValue = mv_rfv[26];
-    pm.treasuryTORLPValue = mv_rfv[27];
-    pm.treasuryDaiTokenAmount = mv_rfv[28];
-    pm.treasuryUsdcTokenAmount = mv_rfv[29];
-    pm.treasuryWFTMTokenAmount = mv_rfv[30];
-    pm.treasuryFRAXTokenAmount = mv_rfv[31];
-    pm.treasuryBOOTokenAmount = mv_rfv[32];
-    pm.treasuryCRVTokenAmount = mv_rfv[33];
-    pm.treasuryWETHTokenAmount = mv_rfv[34];
-    pm.hecDaiTokenAmount = mv_rfv[35];
-    pm.hecUsdcTokenAmount = mv_rfv[36];
-    pm.hecFraxTokenAmount = mv_rfv[37];
 
+    pm.treasuryDaiLPMarketValue = mv_rfv[24]
+    // pm.treasurySORLPValue = mv_rfv[27];
+    pm.treasuryDaiTokenAmount = mv_rfv[28];
+    // pm.treasuryUsdcTokenAmount = mv_rfv[29];
+    pm.treasuryWFTMTokenAmount = mv_rfv[30];
+    pm.luxDaiTokenAmount = mv_rfv[35];
 
     // Rebase rewards, APY, rebase
-    pm.nextDistributedHec = getNextLUXRebase(blockNumber)
-    let apy_rebase = getAPY_Rebase(pm.lumCirculatingSupply, pm.nextDistributedHec)
+    pm.nextDistributedLux = getNextLUXRebase(blockNumber)
+    let apy_rebase = getAPY_Rebase(pm.lumCirculatingSupply, pm.nextDistributedLux)
     pm.currentAPY = apy_rebase[0]
     pm.nextEpochRebase = apy_rebase[1]
 

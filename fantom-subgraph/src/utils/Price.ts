@@ -1,5 +1,5 @@
 import {
-    LUX_WLUM_PAIR_BLOCK,
+    // LUX_WLUM_PAIR,
     LUX_DAI_PAIR,
     USDC_FTM_PAIR,
 } from './Constants'
@@ -31,27 +31,27 @@ export function getLUXUSDRate(): BigDecimal {
     let reserve0 = reserves.value0.toBigDecimal() // LUX
     let reserve1 = reserves.value1.toBigDecimal() // DAI
 
-    let hecRate = reserve1.div(reserve0).div(BIG_DECIMAL_1E9)
-    log.debug("LUX rate {}", [hecRate.toString()])
+    let luxRate = reserve1.div(reserve0).div(BIG_DECIMAL_1E9)
+    log.debug("LUX rate {}", [luxRate.toString()])
 
-    return hecRate
+    return luxRate
 }
 
-export function getWLUMUSDRate(): BigDecimal {
-    let pair = UniswapV2Pair.bind(Address.fromString(LUX_WLUM_PAIR_BLOCK))
+// export function getWLUMUSDRate(): BigDecimal {
+//     let pair = UniswapV2Pair.bind(Address.fromString(LUX_WLUM_PAIR))
 
-    let reserves = pair.getReserves()
-    let reserve0 = reserves.value0.toBigDecimal() // LUX
-    let reserve1 = reserves.value1.toBigDecimal() // WLUM
+//     let reserves = pair.getReserves()
+//     let reserve0 = reserves.value0.toBigDecimal() // LUX
+//     let reserve1 = reserves.value1.toBigDecimal() // WLUM
 
-    let hecRate = getLUXUSDRate()
-    let gohmRate = reserve0.div(reserve1.div(BIG_DECIMAL_1E9)).times(hecRate)
-    log.debug("WLUM rate {}", [gohmRate.toString()])
+//     let luxRate = getLUXUSDRate()
+//     let wlumRate = reserve0.div(reserve1.div(BIG_DECIMAL_1E9)).times(luxRate)
+//     log.debug("WLUM rate {}", [wlumRate.toString()])
 
-    return gohmRate
-}
+//     return wlumRate
+// }
 
-//(slp_treasury/slp_supply)*(2*sqrt(lp_dai * lp_hec))
+//(slp_treasury/slp_supply)*(2*sqrt(lp_dai * lp_lux))
 export function getDiscountedPairUSD(lp_amount: BigInt, total_lp: BigDecimal, reserves: BigDecimal[], tokenRate: BigDecimal): BigDecimal {
     let lp_token_1 = reserves[0]
     let lp_token_2 = reserves[1]

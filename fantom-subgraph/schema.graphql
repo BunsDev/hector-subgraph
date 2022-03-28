@@ -37,6 +37,7 @@ type ProtocolMetric @entity {
 
   treasuryWFTMRiskFreeValue: BigDecimal!
   treasuryWFTMTokenAmount: BigDecimal!
+  treasuryWFTMMarketValue: BigDecimal!
 
   treasuryWLUMRiskFreeValue: BigDecimal!
 
