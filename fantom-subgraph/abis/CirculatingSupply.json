@@ -12,7 +12,7 @@
     },
     {
         "inputs": [],
-        "name": "HEC",
+        "name": "LUX",
         "outputs": [
             {
                 "internalType": "address",
@@ -25,7 +25,7 @@
     },
     {
         "inputs": [],
-        "name": "HECCirculatingSupply",
+        "name": "LUXCirculatingSupply",
         "outputs": [
             {
                 "internalType": "uint256",
@@ -38,7 +38,7 @@
     },
     {
         "inputs": [],
-        "name": "getNonCirculatingHEC",
+        "name": "getNonCirculatingLUX",
         "outputs": [
             {
                 "internalType": "uint256",
@@ -89,7 +89,7 @@
                 "type": "uint256"
             }
         ],
-        "name": "nonCirculatingHECAddresses",
+        "name": "nonCirculatingLUXAddresses",
         "outputs": [
             {
                 "internalType": "address",
@@ -121,7 +121,7 @@
                 "type": "address[]"
             }
         ],
-        "name": "setNonCirculatingHECAddresses",
+        "name": "setNonCirculatingLUXAddresses",
         "outputs": [
             {
                 "internalType": "bool",
