@@ -1,10 +1,10 @@
-import { RebaseCall } from '../generated/sHectorERC20V1/sHectorERC20'
-import { HectorERC20 } from '../generated/sHectorERC20V1/HectorERC20'
+import { RebaseCall } from '../generated/LumensERC20V1/LumensERC20'
+import { LuxorERC20 } from '../generated/LumensERC20V1/LuxorERC20'
 import { Rebase } from '../generated/schema'
 import { Address, BigInt, log } from '@graphprotocol/graph-ts'
-import {HEC_ERC20_CONTRACT, STAKING_CONTRACT_V1} from './utils/Constants'
+import {LUX_ERC20_CONTRACT, STAKING_CONTRACT_V1} from './utils/Constants'
 import { toDecimal } from './utils/Decimals'
-import {getHECUSDRate} from './utils/Price';
+import {getLUXUSDRate} from './utils/Price';
 
 export function rebaseFunction(call: RebaseCall): void {
     let rebaseId = call.transaction.hash.toHex()
@@ -12,7 +12,7 @@ export function rebaseFunction(call: RebaseCall): void {
     log.debug("Rebase_V1 event on TX {} with amount {}", [rebaseId, toDecimal(call.inputs.profit_, 9).toString()])
 
     if (rebase == null && call.inputs.profit_.gt(BigInt.fromI32(0))) {
-        let hec_contract = HectorERC20.bind(Address.fromString(HEC_ERC20_CONTRACT))
+        let hec_contract = LuxorERC20.bind(Address.fromString(LUX_ERC20_CONTRACT))
 
         rebase = new Rebase(rebaseId)
         rebase.amount = toDecimal(call.inputs.profit_, 9)
@@ -21,7 +21,7 @@ export function rebaseFunction(call: RebaseCall): void {
         rebase.percentage = rebase.amount.div(rebase.stakedHecs)
         rebase.transaction = rebaseId
         rebase.timestamp = call.block.timestamp
-        rebase.value = rebase.amount.times(getHECUSDRate())
+        rebase.value = rebase.amount.times(getLUXUSDRate())
         rebase.save()
     }
 }

@@ -1,7 +1,7 @@
 type Sor @entity {
   id: ID!
   timestamp: BigInt!
-  torTVL: BigDecimal!
+  sorTVL: BigDecimal!
   apy: BigDecimal!
   supply: BigDecimal!
 }
